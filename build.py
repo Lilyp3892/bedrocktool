@@ -36,8 +36,7 @@ def generate_changelog(tag_name):
 def get_version():
     repo = git.Repo(".")
     GIT_TAG = subprocess.run(["git", "describe", "--exclude", "r*", "--tags", "--always"], stdout=subprocess.PIPE).stdout.decode("utf8").split("\n")[0]
-    if GIT_TAG == "":
-        GIT_TAG = "v0.0.0"
+    GIT_TAG = "v0.0.0"
     VER_MATCH = VER_RE.match(GIT_TAG)
     VER = VER_MATCH.group(1)
     PATCH = VER_MATCH.group(2) or "0"
