@@ -145,7 +145,15 @@ def do_build(build: Build):
         ]
 
     args.append("./cmd/bedrocktool")
-    subprocess.run(args, env=env).check_returncode()
+    
+    # Capture and display stdout and stderr
+    process = subprocess.run(args, env=env, capture_output=True, text=True)
+    print("STDOUT:", process.stdout)
+    print("STDERR:", process.stderr)
+    
+    # Then check the return code
+    process.check_returncode()
+    
     if build.gui and build.os == "windows":
         clean_syso()
 
