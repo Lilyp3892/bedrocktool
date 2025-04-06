@@ -36,7 +36,8 @@ def generate_changelog(tag_name):
 def get_version():
     repo = git.Repo(".")
     GIT_TAG = subprocess.run(["git", "describe", "--exclude", "r*", "--tags", "--always"], stdout=subprocess.PIPE).stdout.decode("utf8").split("\n")[0]
-    GIT_TAG = "v0.0.0"
+    if GIT_TAG == "":
+        GIT_TAG = "v0.0.0"
     VER_MATCH = VER_RE.match(GIT_TAG)
     VER = VER_MATCH.group(1)
     PATCH = VER_MATCH.group(2) or "0"
@@ -137,10 +138,7 @@ def do_build(build: Build):
         ]
 
     args.append("./cmd/bedrocktool")
-    result = subprocess.run(args, env=env, capture_output=True, text=True)
-if result.returncode != 0:
-    print(f"Build failed with error:\n{result.stderr}")
-    raise subprocess.CalledProcessError(result.returncode, args, result.stdout, result.stderr)
+    subprocess.run(args, env=env).check_returncode()
     if build.gui and build.os == "windows":
         clean_syso()
 
