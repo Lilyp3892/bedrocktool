@@ -38,13 +38,20 @@ def get_version():
     GIT_TAG = subprocess.run(["git", "describe", "--exclude", "r*", "--tags", "--always"], stdout=subprocess.PIPE).stdout.decode("utf8").split("\n")[0]
     if GIT_TAG == "":
         GIT_TAG = "v0.0.0"
+    
+    # Add error handling for regex match
     VER_MATCH = VER_RE.match(GIT_TAG)
-    VER = VER_MATCH.group(1)
-    PATCH = VER_MATCH.group(2) or "0"
+    if VER_MATCH is None:
+        # If regex doesn't match, use a default version
+        VER = "0.0.0"
+        PATCH = "0"
+    else:
+        VER = VER_MATCH.group(1)
+        PATCH = VER_MATCH.group(2) or "0"
+    
     TAG = f"{VER}-{PATCH}"
     if GITHUB_OUTPUT:
         GITHUB_OUTPUT.write(f"release_tag=r{VER}\n")
-        
         GITHUB_OUTPUT.write(f"is_latest={'true' if repo.active_branch == 'master' else 'false'}\n")
     return VER, TAG
 
