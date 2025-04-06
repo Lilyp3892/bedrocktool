@@ -137,7 +137,10 @@ def do_build(build: Build):
         ]
 
     args.append("./cmd/bedrocktool")
-    subprocess.run(args, env=env).check_returncode()
+    result1 = subprocess.run(args, env=env, capture_output=True, text=True)
+if result1.returncode != 0:
+    print(f"Build failed with error:\n{result1.stderr}")
+    raise subprocess.CalledProcessError(result1.returncode, args, result1.stdout, result1.stderr)
     if build.gui and build.os == "windows":
         clean_syso()
 
